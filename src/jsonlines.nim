@@ -42,10 +42,10 @@
   ```nim
   import jsonlines
 
-  let jsonl = parseJsonLines"""{"some": "thing"}
+  let jsonl = parseJsonLines("""{"some": "thing"}
   {"foo": 17, "bar": false, "quux": true}
   {"may": {"include": "nested", "objects": ["and", "arrays"]}}
-  """
+  """)
 
   echo jsonl
   ```
