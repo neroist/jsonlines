@@ -30,6 +30,8 @@ jobs:
       - name: Generate documentation
         run: |
           nimble install -y https://github.com/neroist/jsonlines
+          nimble install -y nimoji
+          nimble install -y nimib
           nimble docs
 
       - name: Deploy to GitHub Pages
