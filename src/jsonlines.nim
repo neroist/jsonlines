@@ -22,13 +22,14 @@
 
   Examples:
   
-  ```jsonl
+  ```json
   {"name": "Gilbert", "wins": [["straight", "7♣"], ["one pair", "10♥"]]}
   {"name": "Alexa", "wins": [["two pair", "4♠"], ["two pair", "9♠"]]}
   {"name": "May", "wins": []}
   {"name": "Deloise", "wins": [["three of a kind", "5♣"]]}
   ```
-  ```jsonl
+
+  ```json
   {"some": "thing"}
   {"foo": 17, "bar": false, "quux": true}
   {"may": {"include": "nested", "objects": ["and", "arrays"]}}
@@ -70,7 +71,8 @@
   Example for #3:
   
   **Example file 1.jsonl:**
-  ```jsonl
+
+  ```json
   ["Name", "Session", "Score", "Completed"]
   ["Gilbert", "2013", 24, true]
   ["Alexa", "2013", 29, true]
@@ -79,6 +81,7 @@
   ```
 
   **Nim code:**
+
   ```nim
   import jsonlins
 
@@ -246,6 +249,11 @@ proc `[]=`*(jsonl: JsonLines, idx: int, val: JsonNode) =
   ## :val: The node to assign the index to
 
   jsonl.nodes[idx] = val
+
+proc len*(jsonl: JsonLines): int = 
+  ## Get the number of nodes in JsonLines `jsonl`
+
+  jsonl.nodes.len
 
 iterator items*(jsonl: JsonLines): JsonNode =
   for node in jsonl.nodes:
