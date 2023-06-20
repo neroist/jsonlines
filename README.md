@@ -90,3 +90,61 @@ import jsonlins
 
 echo parseJsonLinesFile("./1.jsonl")
 ```
+
+## Retrieving JSON Data
+
+Since JSON Lines is simply just a list of JSON values seperated by newlines,
+it can be simply represented as a list of JsonNodes. the
+[`[]`](https://neroist.github.io/jsonlines/jsonlines.html#[]%2CJsonLines%2C)
+operator can be used to get the JsonNode at index `idx`, and the
+[`[]=`](https://neroist.github.io/jsonlines/jsonlines.html#[]%3D%2CJsonLines%2Cint%2C)
+operator can be used to set a JsonNode.
+
+Example:
+
+```nim
+import jsonlines
+
+const data = """
+{"creator": {"handle": "Wendigoon", "display_name": "Wendigoon"}, "video": {"id": "gCUFztOkrEU", "views": 2088488, "title": "Dante's Purgatorio & The 9 Levels of Purgatory Explained"}}
+{"creator": {"handle": "TomScottGo", "display_name": "Tom Scott"}, "video": {"id": "BxV14h0kFs0", "views": 65367317, "title": "This Video Has 65,367,317 Views"}}
+{"creator": {"handle": "HBMmaster", "display_name": "jan Misali"}, "video": {"id": "qID2B4MK7Y0", "views": 1272282, "title": "a better way to count"}}
+{"creator": {"handle": "HBMmaster", "display_name": "jan Misali"}, "video": {"id": "2EZihKCB9iw", "views": 272019, "title": "what is toki pona? (toki pona lesson one)"}}
+{"creator": {"handle": "SarahZ", "display_name": "Sarah Z"}, "video": {"id": "ohFyOjfcLWQ", "views": 3115062, "title": "A Brief History of Homestuck"}}
+"""
+
+let jsonl = parseJsonLines(data)
+
+echo jsonl[3] # retrieve value
+
+jsonl[3] = %* {
+  "creator": {
+    "handle": "sisterhoodofsalvationllc",
+    "display_name": "Sisterhood of Salvation, LLC"
+  },
+
+  "video": {
+    "id": "cX4SNX_UaZI",
+    "views": 393,
+    "title": "Awakened Waters (in partnership with SOS LLC)"
+  }
+} # set value
+
+echo jsonl[3] # echo new value
+```
+
+## other stuff (i guess)
+
+Im really tired ill fix this whenever i feel a bit better.
+
+Anyways, heres some of the other stuff in this library:
+
+- `pretty()`: Prettifies JsonLines JsonLines by making it easier to view. However, this results in invalid JSON Lines.
+
+- `add()`: Add JsonNode to JsonLines object
+
+- `toJArray()`: Convert JsonLines into JSON array (JArray)
+
+- `toJsonLines()`: Convert openArray of JsonNodes to JsonLines
+
+- `jsonLines()`: Convenience iterator that parses string buffer line by line
