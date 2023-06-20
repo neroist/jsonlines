@@ -3,7 +3,7 @@
   [JSON Lines](https://jsonlines.org/) parser (also known as NDJSON or 
   newline-delimited JSON).
 
-  See: <https://neroist.github.io/jsonlines>
+  See: https://neroist.github.io/jsonlines
 ]##
 
 import std/enumerate
