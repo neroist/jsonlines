@@ -233,7 +233,7 @@ proc add*(jsonl: JsonLines, node: JsonNode) =
 
   jsonl.nodes.add node
 
-proc `[]`*(jsonl: JsonLines, idx: int): JsonNode =
+proc `[]`*(jsonl: JsonLines, idx: int | BackwardsIndex): JsonNode =
   ## Get JSON node in JsonLines `jsonl` at index `idx`
   ## 
   ## :jsonl: The JsonLines object to get the node from
@@ -241,7 +241,7 @@ proc `[]`*(jsonl: JsonLines, idx: int): JsonNode =
   
   jsonl.nodes[idx]
 
-proc `[]=`*(jsonl: JsonLines, idx: int, val: JsonNode) =
+proc `[]=`*(jsonl: JsonLines, idx: int, val: JsonNode | BackwardsIndex) =
   ## Assign JSON node in JsonLines `jsonl` at index `idx`
   ## 
   ## :jsonl: The JsonLines object to get the node from
