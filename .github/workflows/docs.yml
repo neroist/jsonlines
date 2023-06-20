@@ -28,7 +28,9 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Generate documentation
-        run: nimble docs
+        run: |
+          nimble install -y https://github.com/neroist/jsonlines
+          nimble docs
 
       - name: Deploy to GitHub Pages
         if: success()
