@@ -109,18 +109,23 @@ window.addEventListener('DOMContentLoaded', main);
 
   </ul>
   <ul class="simple nested-toc-section">[]
-      <li><a class="reference" href="#%5B%5D%2CJsonLines%2Cint"
-    title="`[]`(jsonl: JsonLines; idx: int): JsonNode">`[]`(jsonl: JsonLines; idx: int): JsonNode</a></li>
+      <li><a class="reference" href="#%5B%5D%2CJsonLines%2C"
+    title="`[]`(jsonl: JsonLines; idx: int | BackwardsIndex): JsonNode">`[]`(jsonl: JsonLines; idx: int | BackwardsIndex): JsonNode</a></li>
 
   </ul>
   <ul class="simple nested-toc-section">[]=
-      <li><a class="reference" href="#%5B%5D%3D%2CJsonLines%2Cint%2CJsonNode"
-    title="`[]=`(jsonl: JsonLines; idx: int; val: JsonNode)">`[]=`(jsonl: JsonLines; idx: int; val: JsonNode)</a></li>
+      <li><a class="reference" href="#%5B%5D%3D%2CJsonLines%2Cint%2C"
+    title="`[]=`(jsonl: JsonLines; idx: int; val: JsonNode | BackwardsIndex)">`[]=`(jsonl: JsonLines; idx: int; val: JsonNode | BackwardsIndex)</a></li>
 
   </ul>
   <ul class="simple nested-toc-section">add
       <li><a class="reference" href="#add%2CJsonLines%2CJsonNode"
     title="add(jsonl: JsonLines; node: JsonNode)">add(jsonl: JsonLines; node: JsonNode)</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">len
+      <li><a class="reference" href="#len%2CJsonLines"
+    title="len(jsonl: JsonLines): int">len(jsonl: JsonLines): int</a></li>
 
   </ul>
   <ul class="simple nested-toc-section">parseJsonLines
@@ -266,8 +271,8 @@ Convert JsonLines into a string
 
 </dd>
 </div>
-<div id="[]=,JsonLines,int,JsonNode">
-<dt><pre><span class="Keyword">proc</span> <a href="#%5B%5D%3D%2CJsonLines%2Cint%2CJsonNode"><span class="Identifier">`[]=`</span></a><span class="Other">(</span><span class="Identifier">jsonl</span><span class="Other">:</span> <span class="Identifier">JsonLines</span><span class="Other">;</span> <span class="Identifier">idx</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">JsonNode</span><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+<div id="[]=,JsonLines,int,">
+<dt><pre><span class="Keyword">proc</span> <a href="#%5B%5D%3D%2CJsonLines%2Cint%2C"><span class="Identifier">`[]=`</span></a><span class="Other">(</span><span class="Identifier">jsonl</span><span class="Other">:</span> <span class="Identifier">JsonLines</span><span class="Other">;</span> <span class="Identifier">idx</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">JsonNode</span> <span class="Operator">|</span> <span class="Identifier">BackwardsIndex</span><span class="Other">)</span></pre></dt>
 <dd>
 
 Assign JSON node in JsonLines <tt class="docutils literal"><span class="pre"><span class="Identifier">jsonl</span></span></tt> at index <tt class="docutils literal"><span class="pre"><span class="Identifier">idx</span></span></tt><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">jsonl:</th><td>The JsonLines object to get the node from</td></tr>
@@ -277,8 +282,8 @@ Assign JSON node in JsonLines <tt class="docutils literal"><span class="pre"><sp
 
 </dd>
 </div>
-<div id="[],JsonLines,int">
-<dt><pre><span class="Keyword">proc</span> <a href="#%5B%5D%2CJsonLines%2Cint"><span class="Identifier">`[]`</span></a><span class="Other">(</span><span class="Identifier">jsonl</span><span class="Other">:</span> <span class="Identifier">JsonLines</span><span class="Other">;</span> <span class="Identifier">idx</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">JsonNode</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+<div id="[],JsonLines,">
+<dt><pre><span class="Keyword">proc</span> <a href="#%5B%5D%2CJsonLines%2C"><span class="Identifier">`[]`</span></a><span class="Other">(</span><span class="Identifier">jsonl</span><span class="Other">:</span> <span class="Identifier">JsonLines</span><span class="Other">;</span> <span class="Identifier">idx</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Operator">|</span> <span class="Identifier">BackwardsIndex</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">JsonNode</span></pre></dt>
 <dd>
 
 Get JSON node in JsonLines <tt class="docutils literal"><span class="pre"><span class="Identifier">jsonl</span></span></tt> at index <tt class="docutils literal"><span class="pre"><span class="Identifier">idx</span></span></tt><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">jsonl:</th><td>The JsonLines object to get the node from</td></tr>
@@ -294,6 +299,14 @@ Get JSON node in JsonLines <tt class="docutils literal"><span class="pre"><span 
 Add JsonNode to JsonLines <tt class="docutils literal"><span class="pre"><span class="Identifier">jsonl</span></span></tt><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">jsonl:</th><td>The JsonLines object to add the node to</td></tr>
 <tr><th class="docinfo-name">node:</th><td>The JsonNode to add </td></tr>
 </tbody></table>
+
+</dd>
+</div>
+<div id="len,JsonLines">
+<dt><pre><span class="Keyword">proc</span> <a href="#len%2CJsonLines"><span class="Identifier">len</span></a><span class="Other">(</span><span class="Identifier">jsonl</span><span class="Other">:</span> <span class="Identifier">JsonLines</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+<dd>
+
+Get the number of nodes in JsonLines <tt class="docutils literal"><span class="pre"><span class="Identifier">jsonl</span></span></tt>
 
 </dd>
 </div>
@@ -448,7 +461,7 @@ On the JS backend, these parameters are ignored.</div>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-06-20 03:28:03 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-06-20 18:35:42 UTC</small>
       </div>
     </div>
   </div>

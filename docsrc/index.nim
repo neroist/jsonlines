@@ -1,7 +1,21 @@
+import std/os
 
+import jsonlines
+import nimoji
+import nimib
+
+when defined(readme):
+  nbInitMd
+else:
+  nbInit
+
+nb.title = "Jsonlines Documentation"
+nb.darkMode()
+
+nbText: """
 # jsonlines
 
-A Simple [JSON Lines](https://jsonlines.org) (and NDJSON) parser library in Nim.
+A simple [JSON Lines](https://jsonlines.org) (and NDJSON) parser library in Nim.
 
 > See Also: <https://neroist.github.io/jsonlines/jsonlines.html>
 
@@ -39,45 +53,36 @@ Examples:
 {"foo": 17, "bar": false, "quux": true}
 {"may": {"include": "nested", "objects": ["and", "arrays"]}}
 ```
+"""
 
-
+nbText: """
 ## Parsing JSON Lines
 
 To parse JSON Lines data, all you simply have to do is use the
 [parseJsonLines](https://neroist.github.io/jsonlines/jsonlines.html#parseJsonLines%2Cstring%2Cbool)
 proc.
+"""
 
-
-
-```nim
-let jsonl = parseJsonLines("""{"some": "thing"}
+nbCode:
+  let jsonl = parseJsonLines("""{"some": "thing"}
 {"foo": 17, "bar": false, "quux": true}
 {"may": {"include": "nested", "objects": ["and", "arrays"]}}
 """)
 
-echo jsonl
-```
+  echo jsonl
 
-
-```
-{"some":"thing"}
-{"foo":17,"bar":false,"quux":true}
-{"may":{"include":"nested","objects":["and","arrays"]}}
-```
-
-
-
-
+nbText: """
 This parses the data into a simple JsonLines object, which has a nodes
 attribute, containing a seq of all the
 [JsonNodes](https://nim-lang.org/docs/json.html#JsonNode) in the document.
 
 This proc also works with Streams!
+"""
 
-
+nbText: emojize"""
 ### Parsing from a file
 
-> **⚠️ Note:** This functionality is not supported on the JS backend
+> **:warning: Note:** This functionality is not supported on the JS backend
 
 To parse from a file, you can:
 
@@ -100,25 +105,14 @@ Example for #3:
 ```
 
 **Nim code**:
+"""
 
+setCurrentDir("../docsrc")
 
+nbCode:
+  echo parseJsonLinesFile("1.jsonl")
 
-```nim
-echo parseJsonLinesFile("1.jsonl")
-```
-
-
-```
-["Name","Session","Score","Completed"]
-["Gilbert","2013",24,true]
-["Alexa","2013",29,true]
-["May","2012B",14,false]
-["Deloise","2012A",19,true]
-```
-
-
-
-
+nbText: """
 ## Retrieving JSON Data
 
 Since JSON Lines is simply just a list of JSON values seperated by newlines,
@@ -129,11 +123,10 @@ operator can be used to get the JsonNode at index `idx`, and the
 operator can be used to set a JsonNode.
 
 Example:
+"""
 
-
-
-```nim
-const data = """
+nbCode:
+  const data = """
 {"creator": {"handle": "Wendigoon", "display_name": "Wendigoon"}, "video": {"id": "gCUFztOkrEU", "views": 2088488, "title": "Dante's Purgatorio & The 9 Levels of Purgatory Explained"}}
 {"creator": {"handle": "TomScottGo", "display_name": "Tom Scott"}, "video": {"id": "BxV14h0kFs0", "views": 65367317, "title": "This Video Has 65,367,317 Views"}}
 {"creator": {"handle": "HBMmaster", "display_name": "jan Misali"}, "video": {"id": "qID2B4MK7Y0", "views": 1272282, "title": "a better way to count"}}
@@ -141,59 +134,29 @@ const data = """
 {"creator": {"handle": "SarahZ", "display_name": "Sarah Z"}, "video": {"id": "ohFyOjfcLWQ", "views": 3115062, "title": "A Brief History of Homestuck"}}
 """
 
-let jsonl2 = parseJsonLines(data)
+  let jsonl2 = parseJsonLines(data)
 
-echo jsonl2[3].pretty # retrieve value, but make it pretty
+  echo jsonl2[3].pretty # retrieve value, but make it pretty
 
-# std/json is exported by jsonlines, so we can use
-jsonl2[3] = %* {
-  "creator": {
-    "handle": "sisterhoodofsalvationllc",
-    "display_name": "Sisterhood of Salvation, LLC"
-  },
+  # std/json is exported by jsonlines, so we can use
+  jsonl2[3] = %* {
+    "creator": {
+      "handle": "sisterhoodofsalvationllc",
+      "display_name": "Sisterhood of Salvation, LLC"
+    },
 
-  "video": {
-    "id": "cX4SNX_UaZI",
-    "views": 393,
-    "title": "Awakened Waters (in partnership with SOS LLC)"
-  }
-} # set value
+    "video": {
+      "id": "cX4SNX_UaZI",
+      "views": 393,
+      "title": "Awakened Waters (in partnership with SOS LLC)"
+    }
+  } # set value
 
-echo "" # print newline to seperate values
+  echo "" # print newline to seperate values
+  
+  echo jsonl2[3].pretty # echo new value, but make it pretty
 
-echo jsonl2[3].pretty # echo new value, but make it pretty
-```
-
-
-```
-{
-  "creator": {
-    "handle": "HBMmaster",
-    "display_name": "jan Misali"
-  },
-  "video": {
-    "id": "2EZihKCB9iw",
-    "views": 272019,
-    "title": "what is toki pona? (toki pona lesson one)"
-  }
-}
-
-{
-  "creator": {
-    "handle": "sisterhoodofsalvationllc",
-    "display_name": "Sisterhood of Salvation, LLC"
-  },
-  "video": {
-    "id": "cX4SNX_UaZI",
-    "views": 393,
-    "title": "Awakened Waters (in partnership with SOS LLC)"
-  }
-}
-```
-
-
-
-
+nbText: """
 ## other stuff (i guess)
 
 ill fix this whenever i feel a bit better.
@@ -210,3 +173,11 @@ Anyways, heres some of the other stuff in this library:
 
 - `jsonLines()`: Convenience iterator that parses string buffer line by line
 
+"""
+
+when defined(readme):
+  nb.filename = "../README.md"
+
+setCurrentDir("../docs")
+
+nbSave

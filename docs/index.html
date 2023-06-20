@@ -1,6 +1,418 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-us">
 <head>
-  <meta http-equiv="refresh" content="0; url=https://neroist.github.io/jsonlines/jsonlines.html">
+  <title>Jsonlines Documentation</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🐳</text></svg>">
+  <meta content="text/html; charset=utf-8" http-equiv="content-type">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <meta content="nimib 0.3.9" name="generator">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.min.css" />
+  <link rel='stylesheet' href='https://cdn.jsdelivr.net/gh/pietroppeter/nimib/assets/androidstudio.css' />
+  <script src="https://cdn.jsdelivr.net/gh/pietroppeter/nimib@main/assets/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+
+  <style>
+    .nb-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nb-small {
+      font-size: 0.8rem;
+    }
+    button.nb-small {
+      float: right;
+      padding: 2px;
+      padding-right: 5px;
+      padding-left: 5px;
+    }
+    section#source {
+      display:none
+    }
+    pre > code {
+      font-size: 1.2em;
+    }
+    .nb-output {
+      line-height: 1.15;
+    }
+  </style>
+  
 </head>
+<body>
+<header>
+<div class="nb-box">
+  <span><a href=".">🏡</a></span>
+  <span><code>index.nim</code></span>
+  <span><a href="https://github.com/neroist/jsonlines"><svg aria-hidden="true" width="1.2em" height="1.2em" style="vertical-align: middle; fill: #fff" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg></a></span>
+</div>
+<hr>
+</header><main>
+<h1>jsonlines</h1>
+<p>A Simple <a href="https://jsonlines.org">JSON Lines</a> (and NDJSON) parser library in Nim.</p>
+<blockquote>
+<p>See Also: <a href="https://neroist.github.io/jsonlines/jsonlines.html">https://neroist.github.io/jsonlines/jsonlines.html</a></p>
+</blockquote>
+<hr />
+<p>JSON Lines is a file format similar to JSON, except it can hold multiple
+JSON documents in a single file, which are delimited by newlines. It's a
+convenient format for storing structured data that may be processed one
+record at a time and works well with unix-style text processing tools and
+shell pipelines. It's also a great format for log files, and a flexible
+format for passing messages between cooperating processes.</p>
+<p>This format has three main requirements:</p>
+<ol>
+<li>
+<p><strong>UTF-8 Encoding.</strong> (although this library doesn't check for that)</p>
+</li>
+<li>
+<p><strong>Each line is a valid JSON value.</strong> The most common values will be objects
+or arrays, although any JSON value is permitted. However, with this
+library, you can also choose whether or not to ignore empty lines.</p>
+</li>
+<li>
+<p><strong>Line Separator is <code>'\n'</code>.</strong> <code>'\r\n'</code> is also supported because surrounding
+white space is implicitly ignored when parsing JSON values.</p>
+</li>
+</ol>
+<p>Examples:</p>
+<pre><code class="language-json">{&quot;name&quot;: &quot;Gilbert&quot;, &quot;wins&quot;: [[&quot;straight&quot;, &quot;7♣&quot;], [&quot;one pair&quot;, &quot;10♥&quot;]]}
+{&quot;name&quot;: &quot;Alexa&quot;, &quot;wins&quot;: [[&quot;two pair&quot;, &quot;4♠&quot;], [&quot;two pair&quot;, &quot;9♠&quot;]]}
+{&quot;name&quot;: &quot;May&quot;, &quot;wins&quot;: []}
+{&quot;name&quot;: &quot;Deloise&quot;, &quot;wins&quot;: [[&quot;three of a kind&quot;, &quot;5♣&quot;]]}
+</code></pre>
+<pre><code class="language-json">{&quot;some&quot;: &quot;thing&quot;}
+{&quot;foo&quot;: 17, &quot;bar&quot;: false, &quot;quux&quot;: true}
+{&quot;may&quot;: {&quot;include&quot;: &quot;nested&quot;, &quot;objects&quot;: [&quot;and&quot;, &quot;arrays&quot;]}}
+</code></pre>
+<h2>Parsing JSON Lines</h2>
+<p>To parse JSON Lines data, all you simply have to do is use the
+<a href="https://neroist.github.io/jsonlines/jsonlines.html#parseJsonLines%2Cstring%2Cbool">parseJsonLines</a>
+proc.</p>
+<pre class="nohighlight hljs nim"><span class="hljs-keyword">let</span> jsonl = parseJsonLines(<span class="hljs-string">&quot;&quot;&quot;{&quot;some&quot;: &quot;thing&quot;}
+{&quot;foo&quot;: 17, &quot;bar&quot;: false, &quot;quux&quot;: true}
+{&quot;may&quot;: {&quot;include&quot;: &quot;nested&quot;, &quot;objects&quot;: [&quot;and&quot;, &quot;arrays&quot;]}}
+&quot;&quot;&quot;</span>)
+
+<span class="hljs-keyword">echo</span> jsonl</pre><pre class="nb-output">{&quot;some&quot;:&quot;thing&quot;}
+{&quot;foo&quot;:17,&quot;bar&quot;:false,&quot;quux&quot;:true}
+{&quot;may&quot;:{&quot;include&quot;:&quot;nested&quot;,&quot;objects&quot;:[&quot;and&quot;,&quot;arrays&quot;]}}</pre>
+<p>This parses the data into a simple JsonLines object, which has a nodes
+attribute, containing a seq of all the
+<a href="https://nim-lang.org/docs/json.html#JsonNode">JsonNodes</a> in the document.</p>
+<p>This proc also works with Streams!</p>
+<h3>Parsing from a file</h3>
+<blockquote>
+<p><strong>⚠️ Note:</strong> This functionality is not supported on the JS backend</p>
+</blockquote>
+<p>To parse from a file, you can:</p>
+<ol>
+<li>
+<p>Read the file and use <a href="https://neroist.github.io/jsonlines/jsonlines.html#parseJsonLines%2Cstring%2Cbool">parseJsonLines</a></p>
+</li>
+<li>
+<p>Create the file stream yourself and use <a href="https://neroist.github.io/jsonlines/jsonlines.html#parseJsonLines%2CStream%2Cstring%2Cbool">parseJsonLines</a></p>
+</li>
+<li>
+<p>Simply call <a href="https://neroist.github.io/jsonlines/jsonlines.html#parseJsonLinesFile%2Cstring">parseJsonLinesFile</a> with the name/location of the file.</p>
+</li>
+</ol>
+<p>Example for #3:</p>
+<p><strong>Example file <code>1.jsonl</code></strong>:</p>
+<pre><code class="language-json">[&quot;Name&quot;, &quot;Session&quot;, &quot;Score&quot;, &quot;Completed&quot;]
+[&quot;Gilbert&quot;, &quot;2013&quot;, 24, true]
+[&quot;Alexa&quot;, &quot;2013&quot;, 29, true]
+[&quot;May&quot;, &quot;2012B&quot;, 14, false]
+[&quot;Deloise&quot;, &quot;2012A&quot;, 19, true]
+</code></pre>
+<p><strong>Nim code</strong>:</p>
+<pre class="nohighlight hljs nim"><span class="hljs-keyword">echo</span> parseJsonLinesFile(<span class="hljs-string">&quot;1.jsonl&quot;</span>)</pre><pre class="nb-output">[&quot;Name&quot;,&quot;Session&quot;,&quot;Score&quot;,&quot;Completed&quot;]
+[&quot;Gilbert&quot;,&quot;2013&quot;,24,true]
+[&quot;Alexa&quot;,&quot;2013&quot;,29,true]
+[&quot;May&quot;,&quot;2012B&quot;,14,false]
+[&quot;Deloise&quot;,&quot;2012A&quot;,19,true]</pre>
+<h2>Retrieving JSON Data</h2>
+<p>Since JSON Lines is simply just a list of JSON values seperated by newlines,
+it can be simply represented as a list of JsonNodes. the
+<a href="https://neroist.github.io/jsonlines/jsonlines.html#%5B%5D%2CJsonLines%2C"><code>[]</code></a>
+operator can be used to get the JsonNode at index <code>idx</code>, and the
+<a href="https://neroist.github.io/jsonlines/jsonlines.html#%5B%5D%3D%2CJsonLines%2Cint%2C"><code>[]=</code></a>
+operator can be used to set a JsonNode.</p>
+<p>Example:</p>
+<pre class="nohighlight hljs nim"><span class="hljs-keyword">const</span> data = <span class="hljs-string">&quot;&quot;&quot;
+{&quot;creator&quot;: {&quot;handle&quot;: &quot;Wendigoon&quot;, &quot;display_name&quot;: &quot;Wendigoon&quot;}, &quot;video&quot;: {&quot;id&quot;: &quot;gCUFztOkrEU&quot;, &quot;views&quot;: 2088488, &quot;title&quot;: &quot;Dante's Purgatorio &amp; The 9 Levels of Purgatory Explained&quot;}}
+{&quot;creator&quot;: {&quot;handle&quot;: &quot;TomScottGo&quot;, &quot;display_name&quot;: &quot;Tom Scott&quot;}, &quot;video&quot;: {&quot;id&quot;: &quot;BxV14h0kFs0&quot;, &quot;views&quot;: 65367317, &quot;title&quot;: &quot;This Video Has 65,367,317 Views&quot;}}
+{&quot;creator&quot;: {&quot;handle&quot;: &quot;HBMmaster&quot;, &quot;display_name&quot;: &quot;jan Misali&quot;}, &quot;video&quot;: {&quot;id&quot;: &quot;qID2B4MK7Y0&quot;, &quot;views&quot;: 1272282, &quot;title&quot;: &quot;a better way to count&quot;}}
+{&quot;creator&quot;: {&quot;handle&quot;: &quot;HBMmaster&quot;, &quot;display_name&quot;: &quot;jan Misali&quot;}, &quot;video&quot;: {&quot;id&quot;: &quot;2EZihKCB9iw&quot;, &quot;views&quot;: 272019, &quot;title&quot;: &quot;what is toki pona? (toki pona lesson one)&quot;}}
+{&quot;creator&quot;: {&quot;handle&quot;: &quot;SarahZ&quot;, &quot;display_name&quot;: &quot;Sarah Z&quot;}, &quot;video&quot;: {&quot;id&quot;: &quot;ohFyOjfcLWQ&quot;, &quot;views&quot;: 3115062, &quot;title&quot;: &quot;A Brief History of Homestuck&quot;}}
+&quot;&quot;&quot;</span>
+
+<span class="hljs-keyword">let</span> jsonl2 = parseJsonLines(data)
+
+<span class="hljs-keyword">echo</span> jsonl2[<span class="hljs-number">3</span>].pretty <span class="hljs-comment"># retrieve value, but make it pretty</span>
+
+<span class="hljs-comment"># std/json is exported by jsonlines, so we can use</span>
+jsonl2[<span class="hljs-number">3</span>] = %* {
+  <span class="hljs-string">&quot;creator&quot;</span>: {
+    <span class="hljs-string">&quot;handle&quot;</span>: <span class="hljs-string">&quot;sisterhoodofsalvationllc&quot;</span>,
+    <span class="hljs-string">&quot;display_name&quot;</span>: <span class="hljs-string">&quot;Sisterhood of Salvation, LLC&quot;</span>
+  },
+
+  <span class="hljs-string">&quot;video&quot;</span>: {
+    <span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;cX4SNX_UaZI&quot;</span>,
+    <span class="hljs-string">&quot;views&quot;</span>: <span class="hljs-number">393</span>,
+    <span class="hljs-string">&quot;title&quot;</span>: <span class="hljs-string">&quot;Awakened Waters (in partnership with SOS LLC)&quot;</span>
+  }
+} <span class="hljs-comment"># set value</span>
+
+<span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;&quot;</span> <span class="hljs-comment"># print newline to seperate values</span>
+
+<span class="hljs-keyword">echo</span> jsonl2[<span class="hljs-number">3</span>].pretty <span class="hljs-comment"># echo new value, but make it pretty</span></pre><pre class="nb-output">{
+  &quot;creator&quot;: {
+    &quot;handle&quot;: &quot;HBMmaster&quot;,
+    &quot;display_name&quot;: &quot;jan Misali&quot;
+  },
+  &quot;video&quot;: {
+    &quot;id&quot;: &quot;2EZihKCB9iw&quot;,
+    &quot;views&quot;: 272019,
+    &quot;title&quot;: &quot;what is toki pona? (toki pona lesson one)&quot;
+  }
+}
+
+{
+  &quot;creator&quot;: {
+    &quot;handle&quot;: &quot;sisterhoodofsalvationllc&quot;,
+    &quot;display_name&quot;: &quot;Sisterhood of Salvation, LLC&quot;
+  },
+  &quot;video&quot;: {
+    &quot;id&quot;: &quot;cX4SNX_UaZI&quot;,
+    &quot;views&quot;: 393,
+    &quot;title&quot;: &quot;Awakened Waters (in partnership with SOS LLC)&quot;
+  }
+}</pre>
+<h2>other stuff (i guess)</h2>
+<p>ill fix this whenever i feel a bit better.</p>
+<p>Anyways, heres some of the other stuff in this library:</p>
+<ul>
+<li>
+<p><code>pretty()</code>: Prettifies JsonLines JsonLines by making it easier to view. However, this results in invalid JSON Lines.</p>
+</li>
+<li>
+<p><code>add()</code>: Add JsonNode to JsonLines object</p>
+</li>
+<li>
+<p><code>toJArray()</code>: Convert JsonLines into JSON array (JArray)</p>
+</li>
+<li>
+<p><code>toJsonLines()</code>: Convert openArray of JsonNodes to JsonLines</p>
+</li>
+<li>
+<p><code>jsonLines()</code>: Convenience iterator that parses string buffer line by line</p>
+</li>
+</ul>
+</main>
+<footer>
+<div class="nb-box">
+  <span><span class="nb-small">made with <a href="https://pietroppeter.github.io/nimib/">nimib 🐳</a></span></span>
+  <span></span>
+  <span><button class="nb-small" id="show" onclick="toggleSourceDisplay()">Show Source</button></span>
+</div>
+</footer>
+<section id="source">
+<pre><code class="nohighlight nim hljs"><span class="hljs-keyword">import</span> std/os
+
+<span class="hljs-keyword">import</span> jsonlines
+<span class="hljs-keyword">import</span> nimoji
+<span class="hljs-keyword">import</span> nimib
+
+<span class="hljs-keyword">when</span> <span class="hljs-keyword">defined</span>(readme):
+  nbInitMd
+<span class="hljs-keyword">else</span>:
+  nbInit
+
+nb.title = <span class="hljs-string">&quot;Jsonlines Documentation&quot;</span>
+nb.darkMode()
+
+nbText: <span class="hljs-string">&quot;&quot;&quot;
+# jsonlines
+
+A Simple [JSON Lines](https://jsonlines.org) (and NDJSON) parser library in Nim.
+
+&gt; See Also: &lt;https://neroist.github.io/jsonlines/jsonlines.html&gt;
+
+---
+
+JSON Lines is a file format similar to JSON, except it can hold multiple
+JSON documents in a single file, which are delimited by newlines. It's a
+convenient format for storing structured data that may be processed one
+record at a time and works well with unix-style text processing tools and
+shell pipelines. It's also a great format for log files, and a flexible
+format for passing messages between cooperating processes.
+
+This format has three main requirements:
+
+1. **UTF-8 Encoding.** (although this library doesn't check for that)
+
+2. **Each line is a valid JSON value.** The most common values will be objects
+   or arrays, although any JSON value is permitted. However, with this
+   library, you can also choose whether or not to ignore empty lines.
+
+3. **Line Separator is `'\n'`.** `'\r\n'` is also supported because surrounding
+   white space is implicitly ignored when parsing JSON values.
+
+Examples:
+
+```json
+{&quot;name&quot;: &quot;Gilbert&quot;, &quot;wins&quot;: [[&quot;straight&quot;, &quot;7♣&quot;], [&quot;one pair&quot;, &quot;10♥&quot;]]}
+{&quot;name&quot;: &quot;Alexa&quot;, &quot;wins&quot;: [[&quot;two pair&quot;, &quot;4♠&quot;], [&quot;two pair&quot;, &quot;9♠&quot;]]}
+{&quot;name&quot;: &quot;May&quot;, &quot;wins&quot;: []}
+{&quot;name&quot;: &quot;Deloise&quot;, &quot;wins&quot;: [[&quot;three of a kind&quot;, &quot;5♣&quot;]]}
+```
+
+```json
+{&quot;some&quot;: &quot;thing&quot;}
+{&quot;foo&quot;: 17, &quot;bar&quot;: false, &quot;quux&quot;: true}
+{&quot;may&quot;: {&quot;include&quot;: &quot;nested&quot;, &quot;objects&quot;: [&quot;and&quot;, &quot;arrays&quot;]}}
+```
+&quot;&quot;&quot;</span>
+
+nbText: <span class="hljs-string">&quot;&quot;&quot;
+## Parsing JSON Lines
+
+To parse JSON Lines data, all you simply have to do is use the
+[parseJsonLines](https://neroist.github.io/jsonlines/jsonlines.html#parseJsonLines%2Cstring%2Cbool)
+proc.
+&quot;&quot;&quot;</span>
+
+nbCode:
+  <span class="hljs-keyword">let</span> jsonl = parseJsonLines(<span class="hljs-string">&quot;&quot;&quot;{&quot;some&quot;: &quot;thing&quot;}
+{&quot;foo&quot;: 17, &quot;bar&quot;: false, &quot;quux&quot;: true}
+{&quot;may&quot;: {&quot;include&quot;: &quot;nested&quot;, &quot;objects&quot;: [&quot;and&quot;, &quot;arrays&quot;]}}
+&quot;&quot;&quot;</span>)
+
+  <span class="hljs-keyword">echo</span> jsonl
+
+nbText: <span class="hljs-string">&quot;&quot;&quot;
+This parses the data into a simple JsonLines object, which has a nodes
+attribute, containing a seq of all the
+[JsonNodes](https://nim-lang.org/docs/json.html#JsonNode) in the document.
+
+This proc also works with Streams!
+&quot;&quot;&quot;</span>
+
+nbText: <span class="hljs-string">emojize&quot;&quot;&quot;
+### Parsing from a file
+
+&gt; **:warning: Note:** This functionality is not supported on the JS backend
+
+To parse from a file, you can:
+
+1. Read the file and use [parseJsonLines](https://neroist.github.io/jsonlines/jsonlines.html#parseJsonLines%2Cstring%2Cbool)
+
+2. Create the file stream yourself and use [parseJsonLines](https://neroist.github.io/jsonlines/jsonlines.html#parseJsonLines%2CStream%2Cstring%2Cbool)
+
+3. Simply call [parseJsonLinesFile](https://neroist.github.io/jsonlines/jsonlines.html#parseJsonLinesFile%2Cstring) with the name/location of the file.
+
+Example for #3:
+
+**Example file `1.jsonl`**:
+
+```json
+[&quot;Name&quot;, &quot;Session&quot;, &quot;Score&quot;, &quot;Completed&quot;]
+[&quot;Gilbert&quot;, &quot;2013&quot;, 24, true]
+[&quot;Alexa&quot;, &quot;2013&quot;, 29, true]
+[&quot;May&quot;, &quot;2012B&quot;, 14, false]
+[&quot;Deloise&quot;, &quot;2012A&quot;, 19, true]
+```
+
+**Nim code**:
+&quot;&quot;&quot;</span>
+
+setCurrentDir(<span class="hljs-string">&quot;../docsrc&quot;</span>)
+
+nbCode:
+  <span class="hljs-keyword">echo</span> parseJsonLinesFile(<span class="hljs-string">&quot;1.jsonl&quot;</span>)
+
+nbText: <span class="hljs-string">&quot;&quot;&quot;
+## Retrieving JSON Data
+
+Since JSON Lines is simply just a list of JSON values seperated by newlines,
+it can be simply represented as a list of JsonNodes. the
+[`[]`](https://neroist.github.io/jsonlines/jsonlines.html#[]%2CJsonLines%2C)
+operator can be used to get the JsonNode at index `idx`, and the
+[`[]=`](https://neroist.github.io/jsonlines/jsonlines.html#[]%3D%2CJsonLines%2Cint%2C)
+operator can be used to set a JsonNode.
+
+Example:
+&quot;&quot;&quot;</span>
+
+nbCode:
+  <span class="hljs-keyword">const</span> data = <span class="hljs-string">&quot;&quot;&quot;
+{&quot;creator&quot;: {&quot;handle&quot;: &quot;Wendigoon&quot;, &quot;display_name&quot;: &quot;Wendigoon&quot;}, &quot;video&quot;: {&quot;id&quot;: &quot;gCUFztOkrEU&quot;, &quot;views&quot;: 2088488, &quot;title&quot;: &quot;Dante's Purgatorio &amp; The 9 Levels of Purgatory Explained&quot;}}
+{&quot;creator&quot;: {&quot;handle&quot;: &quot;TomScottGo&quot;, &quot;display_name&quot;: &quot;Tom Scott&quot;}, &quot;video&quot;: {&quot;id&quot;: &quot;BxV14h0kFs0&quot;, &quot;views&quot;: 65367317, &quot;title&quot;: &quot;This Video Has 65,367,317 Views&quot;}}
+{&quot;creator&quot;: {&quot;handle&quot;: &quot;HBMmaster&quot;, &quot;display_name&quot;: &quot;jan Misali&quot;}, &quot;video&quot;: {&quot;id&quot;: &quot;qID2B4MK7Y0&quot;, &quot;views&quot;: 1272282, &quot;title&quot;: &quot;a better way to count&quot;}}
+{&quot;creator&quot;: {&quot;handle&quot;: &quot;HBMmaster&quot;, &quot;display_name&quot;: &quot;jan Misali&quot;}, &quot;video&quot;: {&quot;id&quot;: &quot;2EZihKCB9iw&quot;, &quot;views&quot;: 272019, &quot;title&quot;: &quot;what is toki pona? (toki pona lesson one)&quot;}}
+{&quot;creator&quot;: {&quot;handle&quot;: &quot;SarahZ&quot;, &quot;display_name&quot;: &quot;Sarah Z&quot;}, &quot;video&quot;: {&quot;id&quot;: &quot;ohFyOjfcLWQ&quot;, &quot;views&quot;: 3115062, &quot;title&quot;: &quot;A Brief History of Homestuck&quot;}}
+&quot;&quot;&quot;</span>
+
+  <span class="hljs-keyword">let</span> jsonl2 = parseJsonLines(data)
+
+  <span class="hljs-keyword">echo</span> jsonl2[<span class="hljs-number">3</span>].pretty <span class="hljs-comment"># retrieve value, but make it pretty</span>
+
+  <span class="hljs-comment"># std/json is exported by jsonlines, so we can use</span>
+  jsonl2[<span class="hljs-number">3</span>] = %* {
+    <span class="hljs-string">&quot;creator&quot;</span>: {
+      <span class="hljs-string">&quot;handle&quot;</span>: <span class="hljs-string">&quot;sisterhoodofsalvationllc&quot;</span>,
+      <span class="hljs-string">&quot;display_name&quot;</span>: <span class="hljs-string">&quot;Sisterhood of Salvation, LLC&quot;</span>
+    },
+
+    <span class="hljs-string">&quot;video&quot;</span>: {
+      <span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-string">&quot;cX4SNX_UaZI&quot;</span>,
+      <span class="hljs-string">&quot;views&quot;</span>: <span class="hljs-number">393</span>,
+      <span class="hljs-string">&quot;title&quot;</span>: <span class="hljs-string">&quot;Awakened Waters (in partnership with SOS LLC)&quot;</span>
+    }
+  } <span class="hljs-comment"># set value</span>
+
+  <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;&quot;</span> <span class="hljs-comment"># print newline to seperate values</span>
+  
+  <span class="hljs-keyword">echo</span> jsonl2[<span class="hljs-number">3</span>].pretty <span class="hljs-comment"># echo new value, but make it pretty</span>
+
+nbText: <span class="hljs-string">&quot;&quot;&quot;
+## other stuff (i guess)
+
+ill fix this whenever i feel a bit better.
+
+Anyways, heres some of the other stuff in this library:
+
+- `pretty()`: Prettifies JsonLines JsonLines by making it easier to view. However, this results in invalid JSON Lines.
+
+- `add()`: Add JsonNode to JsonLines object
+
+- `toJArray()`: Convert JsonLines into JSON array (JArray)
+
+- `toJsonLines()`: Convert openArray of JsonNodes to JsonLines
+
+- `jsonLines()`: Convenience iterator that parses string buffer line by line
+
+&quot;&quot;&quot;</span>
+
+<span class="hljs-keyword">when</span> <span class="hljs-keyword">defined</span>(readme):
+  nb.filename = <span class="hljs-string">&quot;../README.md&quot;</span>
+
+setCurrentDir(<span class="hljs-string">&quot;../docs&quot;</span>)
+
+nbSave
+</code></pre>
+</section><script>
+function toggleSourceDisplay() {
+  var btn = document.getElementById("show")
+  var source = document.getElementById("source");
+  if (btn.innerHTML=="Show Source") {
+    btn.innerHTML = "Hide Source";
+    source.style.display = "block";
+  } else {
+    btn.innerHTML = "Show Source";
+    source.style.display = "none";
+  }
+}
+</script></body>
 </html>
