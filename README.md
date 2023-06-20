@@ -1,7 +1,7 @@
 
 # jsonlines
 
-A Simple [JSON Lines](https://jsonlines.org) (and NDJSON) parser library in Nim.
+A simple [JSON Lines](https://jsonlines.org) (and NDJSON) parser library in Nim.
 
 > See Also: <https://neroist.github.io/jsonlines/jsonlines.html>
 
