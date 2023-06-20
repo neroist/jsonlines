@@ -7,7 +7,7 @@ type
   JsonLines = ref object
     nodes*: seq[JsonNode]
 
-proc parseJsonLines*(buffer: string; rawIntegers = false, rawFloats = false): JsonLines = 
+proc parseJsonLines*(buffer: string; rawIntegers = false, rawFloats = false; ignoreEmptyLines: bool = true): JsonLines = 
   ## Parses JSON Lines from `buffer`.
   ## 
   ## If `buffer` contains extra data, it will raise `JsonParsingError`.
@@ -22,10 +22,14 @@ proc parseJsonLines*(buffer: string; rawIntegers = false, rawFloats = false): Js
   ##              `JInt` field but kept as raw numbers via `JString`.
   ## :rawFloats: If is true, floating point literals will not be converted
   ##             to a `JFloat` field but kept as raw numbers via `JString`.
+  ## :ignoreEmptyLines: Whether or not to ignore empty lines in the buffer.
 
   new result
   
   for lineno, line in enumerate(1, buffer.splitLines()):
+    if (line.len == 0 or line in ["\n", "\r\n"]) and ignoreEmptyLines:
+      continue
+    
     when defined(js):
       # JS backend does not support `rawIntegers` and `rawFloats` params
 
@@ -39,7 +43,7 @@ proc parseJsonLines*(buffer: string; rawIntegers = false, rawFloats = false): Js
         rawFloats
       )
 
-proc parseJsonLines*(s: Stream, filename: string = "input"; rawIntegers = false, rawFloats = false): JsonLines = 
+proc parseJsonLines*(s: Stream, filename: string = "input"; rawIntegers = false, rawFloats = false; ignoreEmptyLines: bool = true): JsonLines = 
   ## Parses from a stream `s` into `JsonLines`. `filename` is only needed
   ## for nice error messages.
   ## 
@@ -55,6 +59,7 @@ proc parseJsonLines*(s: Stream, filename: string = "input"; rawIntegers = false,
   ##              `JInt` field but kept as raw numbers via `JString`.
   ## :rawFloats: If is true, floating point literals will not be converted
   ##             to a `JFloat` field but kept as raw numbers via `JString`.
+  ## :ignoreEmptyLines: Whether or not to ignore empty lines in the stream `s`.
   
   new result
 
@@ -63,6 +68,9 @@ proc parseJsonLines*(s: Stream, filename: string = "input"; rawIntegers = false,
     lineno: int = 1
 
   while s.readLine(line):
+    if (line.len == 0 or line in ["\n", "\r\n"]) and ignoreEmptyLines:
+      continue
+    
     result.nodes.add parseJson(
       newStringStream('\n'.repeat(lineno - 1) & line), # better error msgs, correct line numbers
       filename, 
@@ -167,7 +175,7 @@ iterator mpairs*(jsonl: var JsonLines): tuple[idx: int, node: var JsonNode] =
   for idx, _ in jsonl.nodes:
     yield (idx, jsonl.nodes[idx])
 
-iterator jsonLines*(buffer: string; rawIntegers = false, rawFloats = false): JsonNode = 
+iterator jsonLines*(buffer: string; rawIntegers = false, rawFloats = false; ignoreEmptyLines: bool = true): JsonNode = 
   ## Convinience iterator to iterate through the JSON values in JsonLines 
   ## document `buffer`
   ## 
@@ -181,8 +189,12 @@ iterator jsonLines*(buffer: string; rawIntegers = false, rawFloats = false): Jso
   ##              `JInt` field but kept as raw numbers via `JString`.
   ## :rawFloats: If is true, floating point literals will not be converted
   ##             to a `JFloat` field but kept as raw numbers via `JString`.
+  ## :ignoreEmptyLines: Whether or not to ignore empty lines in the buffer.
   
   for lineno, line in enumerate(1, buffer.splitLines()):
+    if (line.len == 0 or line in ["\n", "\r\n"]) and ignoreEmptyLines:
+      continue    
+    
     when defined(js):
       yield parseJson('\n'.repeat(lineno - 1) & line)
     else:
