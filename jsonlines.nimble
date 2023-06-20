@@ -23,6 +23,7 @@ task docs, "Build docs for jsonlines":
 
 requires "nim >= 1.4.0"
 
-taskRequires "docs", "https://github.com/neroist/jsonlines"
-taskRequires "docs", "nimoji"
-taskRequires "docs", "nimib"
+when false:
+  taskRequires "docs", "https://github.com/neroist/jsonlines"
+  taskRequires "docs", "nimoji"
+  taskRequires "docs", "nimib"
