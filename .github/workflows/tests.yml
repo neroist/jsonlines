@@ -1,0 +1,42 @@
+name: test
+run-name: Test
+
+on: 
+  push:
+    branches:
+      - "main"
+    paths:
+      - "jsonlines.nimble"
+
+      - "src/jsonlines.nim"
+      - ".github/workflows/tests.yml"
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    strategy:
+      matrix:
+        nim:
+          - 1.4.x
+          - devel
+          - stable
+
+    name: Tests For Nim ${{ matrix.nim }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Nim
+        uses: jiro4989/setup-nim-action@v1
+        with:
+          nim-version: ${{ matrix.nim }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Init submodules
+        run: git submodule update --init
+
+      - name: Run Tests
+        run: nimble test      
