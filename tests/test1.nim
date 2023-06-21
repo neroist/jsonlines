@@ -9,10 +9,16 @@ import unittest
 
 import jsonlines
 
-test "can parse":
-  let jsonl = parseJsonLinesFile("data/1.jsonl")
+test "can parse string":
+  let jsonl = parseJsonLines("""["im", "tired"]
+  {"no": ["way", "fr?"]}""")
 
-  check jsonl[0] == %* ["Name", "Session", "Score", "Completed"]
+  check jsonl[0] == %* ["im", "tired"]
+
+test "can parse file":
+  let jsonl = parseJsonLinesFile("tests/data/1.jsonl")
+
+  check jsonl[3] == %* ["May", "2012B", 14, false]
 
 test "can throw errors":
   expect(JsonParsingError):
