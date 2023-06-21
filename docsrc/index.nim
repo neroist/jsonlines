@@ -120,11 +120,11 @@ nbText: """
 ## Retrieving JSON Data
 
 Since JSON Lines is simply just a list of JSON values seperated by newlines,
-it can be simply represented as a list of JsonNodes. the
+it can be simply represented as a list of JsonNodes. The
 [`[]`](https://neroist.github.io/jsonlines/jsonlines.html#[]%2CJsonLines%2C)
 operator can be used to get the JsonNode at index `idx`, and the
 [`[]=`](https://neroist.github.io/jsonlines/jsonlines.html#[]%3D%2CJsonLines%2Cint%2C)
-operator can be used to set a JsonNode.
+operator can be used to set a JsonNode at an index.
 
 Example:
 """
@@ -142,7 +142,8 @@ nbCode:
 
   echo jsonl2[3].pretty # retrieve value, but make it pretty
 
-  # std/json is exported by jsonlines, so we can use
+  # std/json is exported by jsonlines, so we can use this operator to 
+  # construct JSON
   jsonl2[3] = %* {
     "creator": {
       "handle": "sisterhoodofsalvationllc",
