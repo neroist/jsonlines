@@ -92,7 +92,7 @@ when not defined(js):
   # FileStream object is not available on JS backend
   # nor is `readFile`
 
-  proc parseJsonLinesFile*(filename: string): JsonLines =
+  proc parseJsonLinesFile*(filename: string; rawIntegers = false, rawFloats = false; ignoreEmptyLines: bool = true): JsonLines =
     ## Parses `file` into `JsonLines`.
     ## 
     ## If `file` contains extra data, it will raise `JsonParsingError`.
@@ -104,7 +104,7 @@ when not defined(js):
     if stream == nil:
       raise newException(IOError, "cannot read from file: " & filename)
     
-    result = parseJsonLines(stream, filename, rawIntegers=false, rawFloats=false)
+    result = parseJsonLines(stream, filename, rawIntegers, rawFloats, ignoreEmptyLines)
  
 proc `$`*(jsonl: JsonLines): string =
   ## Convert JsonLines into a string
