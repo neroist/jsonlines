@@ -9,5 +9,11 @@ import unittest
 
 import jsonlines
 
-test "can add":
-  check add(5, 5) == 10
+test "can parse":
+  let jsonl = parseJsonLinesFile("data/1.jsonl")
+
+  check jsonl[0] == %* ["Name", "Session", "Score", "Completed"]
+
+test "can throw errors":
+  expect(JsonParsingError):
+    discard parseJsonLines("[1, 2, 4, fdgfdgd 444ff]")

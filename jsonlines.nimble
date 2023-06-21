@@ -23,6 +23,7 @@ task docs, "Build docs for jsonlines":
 
 requires "nim >= 1.4.0"
 
+# "Error: undeclared identifier: 'taskRequires'" MY ASS
 when false:
   taskRequires "docs", "https://github.com/neroist/jsonlines"
   taskRequires "docs", "nimoji"
