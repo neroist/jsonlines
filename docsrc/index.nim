@@ -1,3 +1,5 @@
+#import std/strutils
+#import std/sequtils
 import std/os
 
 import jsonlines
@@ -11,6 +13,8 @@ else:
 
 nb.title = "Jsonlines Documentation"
 nb.darkMode()
+
+# TODO: make TOC, see https://github.com/neroist/webui-docs
 
 nbText: """
 # jsonlines
@@ -157,22 +161,79 @@ nbCode:
   echo jsonl2[3].pretty # echo new value, but make it pretty
 
 nbText: """
+## Iterating Through JSON Lines Data
+
+You can iterate through JSON Lines data via the standard `items` iterator,
+using a JsonLines object. However you can also iterate through JSON Lines
+data using the
+[`jsonLines`](https://neroist.github.io/jsonlines/jsonlines.html#jsonLines.i%2Cstring%2Cbool)
+iterator, which accepts a string `buffer` and supports the same parameters as
+`parseJsonLines()`. It parses the string buffer line-by-line and yields the
+resulting JsonNode.
+
+Using standard `items` iterator:
+"""
+
+nbCode:
+  let jsonl3 = parseJsonLines("""
+["string", "length"]
+["A", 5.8]
+["B", 12.2]
+["C", 0.34]
+""")
+
+  for node in jsonl3:
+    echo node
+
+nbText: """
+Using the `jsonLines` iterator:
+"""
+
+nbCode:
+  let jsonl4 = """
+{"scp": {"item_number": "000", "name": "", "object_class": "#NULL"}}
+{"scp": {"item_number": "002", "name": "The \"Living\" Room", "object_class": "Euclid"}}
+{"scp": {"item_number": "093", "name": "Red Sea Object", "object_class": "Euclid"}}
+{"scp": {"item_number": "102", "name": "Property of Marshall, Carter, and Dark Ltd.", "object_class": "Euclid"}}
+{"scp": {"item_number": "999", "name": "The Tickle Monster", "object_class": "Safe"}}
+{"scp": {"item_number": "2030", "name": "LA U GH IS F UN", "object_class": "Keter"}}
+{"scp": {"item_number": "4000", "name": "Taboo", "object_class": "Keter"}}
+"""
+
+  for node in jsonLines(jsonl4):
+    echo node["scp"]
+
+nbText: """
+## Pretty-Printing JSON Lines
+
+You can use the [`pretty()`](https://neroist.github.io/jsonlines/jsonlines.html#pretty%2CJsonLines%2Cint) 
+proc to pretty-print JSON Lines data. However, this results in invalid JSON
+Lines, as each line is supposed to be a self-contained JSON value. However,
+pretty printing it makes it easier for humans to view.
+"""
+
+nbCode:
+  # from one of the previous sections
+  echo jsonl.pretty()
+
+nbText: """
+You can also control the indent of the JSON via the `indent` parameter.
+"""
+
+# Conversion and Creation of JsonLine objects/JSON Lines Data
+
+nbText: """
 ## other stuff (i guess)
 
-ill fix this whenever i feel a bit better.
+ill fix this ...eventually.
 
 Anyways, heres some of the other stuff in this library:
-
-- `pretty()`: Prettifies JsonLines JsonLines by making it easier to view. However, this results in invalid JSON Lines.
 
 - `add()`: Add JsonNode to JsonLines object
 
 - `toJArray()`: Convert JsonLines into JSON array (JArray)
 
 - `toJsonLines()`: Convert openArray of JsonNodes to JsonLines
-
-- `jsonLines()`: Convenience iterator that parses string buffer line by line
-
 """
 
 when defined(readme):
