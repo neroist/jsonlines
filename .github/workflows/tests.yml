@@ -1,5 +1,5 @@
 name: test
-run-name: Test
+run-name: Run Tests
 
 on: 
   push:
